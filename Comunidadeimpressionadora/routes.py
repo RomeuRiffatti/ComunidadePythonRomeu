@@ -31,8 +31,8 @@ def login():
     form_criarconta = FormCriarConta()
     if form_login.validate_on_submit() and 'botao_submit_login' in request.form: ## validate on submit roda as validações pré setadas nos forms e todas as funções com validate_ do forms tbm
         usuario = Usuario.query.filter_by(email=form_login.email.data).first()
-        if usuario and bcrypt.check_password_hash(usuario.senha, form_login.senha.data):  ## primeiro o texto encriptado que esta salvo no db e depois a senha que o usuario está colocando no formulário
-            login_user(usuario, remember=form_login.lembrar_dados.data)  ## aqui é a função que faz login, e o remember é o parâmetro sobre manter logado e recebe True ou False. Esse lembrar dados retorna um booleano tbm, olhar nos forms onde declarei    
+        if usuario and bcrypt.check_password_hash(usuario.senha, form_login.senha.data):  
+            login_user(usuario, remember=form_login.lembrar_dados.data)   
             flash(f'Login feito com sucesso no e-mail: {form_login.email.data}', 'alert-success')
             par_next = request.args.get('next')
             if par_next:
@@ -43,7 +43,7 @@ def login():
             flash('Falha no Login, Email ou Senha incorretos.', 'alert-danger') ## alerta é classe do bootstrap
     
     if form_criarconta.validate_on_submit() and 'botao_submit_criarconta' in request.form:
-        senha_crypt = bcrypt.generate_password_hash(form_criarconta.senha.data)
+        senha_crypt = bcrypt.generate_password_hash(form_criarconta.senha.data).decode('utf-8')
         usuario = Usuario(username=form_criarconta.username.data, email=form_criarconta.email.data, senha=senha_crypt)
         database.session.add(usuario)
         database.session.commit()
